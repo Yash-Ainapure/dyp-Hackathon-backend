@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model eventbookings {
+  id                 Int          @id @default(autoincrement())
+  user_id            Int
+  designation        String       @db.VarChar(20)
+  department         String       @db.VarChar(20)
+  phone              String       @db.VarChar(20)
+  title              String       @db.VarChar(100)
+  details            String       @db.VarChar(255)
+  halldate           String       @db.VarChar(30)
+  timefrom           String       @db.VarChar(30)
+  timeto             String       @db.VarChar(30)
+  coordinatorname    String       @db.VarChar(30)
+  guestname          String       @db.VarChar(100)
+  numberofguests     String       @db.VarChar(20)
+  numberofattendents String       @db.VarChar(30)
+  users              users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
+  facilities         facilities[]
+}
+
+model facilities {
+  id              Int           @id @default(autoincrement())
+  event_id        Int
+  projector       String        @db.VarChar(10)
+  podiummic       String        @db.VarChar(10)
+  cordmic         String        @db.VarChar(10)
+  cordlessmic     String        @db.VarChar(10)
+  collarmic       String        @db.VarChar(10)
+  projectorremote String        @db.VarChar(10)
+  usbdongle       String        @db.VarChar(10)
+  mouse           String        @db.VarChar(10)
+  amplifier       String        @db.VarChar(10)
+  roomkey         String        @db.VarChar(10)
+  acremote        String        @db.VarChar(10)
+  lcdremote       String        @db.VarChar(10)
+  eventbookings   eventbookings @relation(fields: [event_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_event")
+}
+
+model users {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  email         String          @unique @db.VarChar(255)
+  password      String          @db.VarChar(255)
+  role          String          @db.VarChar(20)
+  eventbookings eventbookings[]
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
